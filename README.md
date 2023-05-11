@@ -48,7 +48,10 @@ python src/image_search.py -i <chosen_image> -d <directory_with_images> -n <numb
 ├── utils                               
 │   ├── __init__.py                     
 │   ├── im_search.py                 
-│   └── plot.py                         
+│   └── plot.py   
+├── requirements.txt    
+├── run.sh   
+├── setup.sh                       
 └── README.md                           
 ```
 
