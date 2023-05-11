@@ -34,7 +34,6 @@ def nrows_ncols(n:int):
     n : int
         number of images to plot
 
-    
     Returns
     --------
     nrows : int
