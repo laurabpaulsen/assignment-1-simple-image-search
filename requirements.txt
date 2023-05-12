@@ -1,5 +1,4 @@
-matplotlib
-argparse
-tqdm
-pandas
-opencv-python
+matplotlib==3.7.1
+pandas==2.0.1
+tqdm==4.65.0
+opencv-python-headless

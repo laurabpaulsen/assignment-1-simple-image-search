@@ -154,3 +154,5 @@ cython_debug/
 
 # ignore ds_store
 .DS_Store
+
+data/flowers/*
