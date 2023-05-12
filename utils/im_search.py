@@ -5,7 +5,7 @@ from pathlib import Path
 
 def image_hist_normalize(image_path: Path):
     """
-    Loads an image, calculates its histogram across all three color channels and min max normalizes it.
+    Loads an image, calculates its histogram across all three color channels and min-max normalizes it.
     
     Parameters
     -----------
