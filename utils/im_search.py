@@ -136,7 +136,7 @@ def image_search_knn(chosen_image, image_paths: list, model, n:int = 5):
     
     # fit KNN 
     neighbours = NearestNeighbors(
-        n_neighbors=n*2, 
+        n_neighbors=n+1, 
         algorithm='brute',
         metric='cosine'
         ).fit(features)
@@ -149,10 +149,7 @@ def image_search_knn(chosen_image, image_paths: list, model, n:int = 5):
     indices = np.array(indices[0]).astype(int)
 
     # sort distances (and include image paths)
-    distances = sorted(zip([image_paths[i] for i in indices], distances[0]), key=lambda x: x[1])
-
-    # get the n most similar images and chosen image 
-    dist = [(chosen_image, 0)] + distances[:n]
+    dist = sorted(zip([image_paths[i] for i in indices], distances[0]), key=lambda x: x[1])
     
     # creating a dataframe with the n most similar images including the filename and the distance
     df = pd.DataFrame(dist, columns = ["image", "distance"])
