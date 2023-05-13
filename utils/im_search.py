@@ -110,19 +110,16 @@ def extract_features(image_path: Path, model):
 
     return features
 
-def image_search_knn(chosen_image, image_paths: list, model, n:int):
+def image_search_knn(chosen_image, image_paths: list, model, n:int = 5):
     """
     Parameters
     -----------
     chosen_image : Path 
         The path to the chosen image
-    
     image_paths : list 
         list of paths to the images
-
     model : Model
         Pretrained model (e.g., VGG16)
-
     n : int
         number of most similar images to return (default = 5)
 
@@ -149,14 +146,13 @@ def image_search_knn(chosen_image, image_paths: list, model, n:int):
 
     # find the nearest neighbours for target
     distances, indices = neighbours.kneighbors([target_features])
+    indices = np.array(indices[0]).astype(int)
 
-    distances = zip(image_paths, distances)
-
-    # sort distances
-    distances.sort(key = lambda x: x[1])
+    # sort distances (and include image paths)
+    distances = sorted(zip([image_paths[i] for i in indices], distances[0]), key=lambda x: x[1])
 
     # get the n most similar images and chosen image 
-    dist = [(chosen_image, 0)] + (distances[:n]) 
+    dist = [(chosen_image, 0)] + distances[:n]
     
     # creating a dataframe with the n most similar images including the filename and the distance
     df = pd.DataFrame(dist, columns = ["image", "distance"])
