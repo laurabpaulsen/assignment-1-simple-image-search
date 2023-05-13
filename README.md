@@ -1,5 +1,5 @@
 # Image search
-This repository holds the code for assignment 1 for visual analytics (S2023). A simple image search algorithm based on colour histograms is implemented to find the *n* most similar images to a given image.
+This repository holds the code for assignment 1 for visual analytics (S2023). A simple image search algorithm based on colour histograms is implemented to find the *n* most similar images to a given image. Additionally, a K-nearest neighbour algorithm is implemented. 
 
 ## Description of the data
 The dataset is a collection of images of 17 different species of flowers. For each class the dataset holds 80 images. For more information about the dataset, follow this [link](https://www.robots.ox.ac.uk/~vgg/data/flowers/17/).

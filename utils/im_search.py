@@ -2,6 +2,15 @@ import cv2
 import pandas as pd
 from tqdm import tqdm
 from pathlib import Path
+import numpy as np
+
+# tensorflow VGG16 for extracting features
+from tensorflow.keras.preprocessing.image import img_to_array, load_img
+from tensorflow.keras.applications.vgg16 import preprocess_input
+
+from numpy.linalg import norm
+
+from sklearn.neighbors import NearestNeighbors
 
 def image_hist_normalize(image_path: Path):
     """
@@ -65,3 +74,67 @@ def image_search_dist(chosen_image: Path, image_paths:list, n:int = 5):
     df = pd.DataFrame(dist, columns = ["image", "distance"])
     
     return df
+
+def extract_features(image_path: Path, model):
+    """
+    Extracts features for image search from image using a pretrained model. 
+    
+    Parameters
+    -----------
+    image_path : Path 
+        The path to the image to extract features from
+    model : Model
+        Pretrained model (e.g., VGG16)
+
+    Returns
+    -------
+    features : np.array
+        The features extracted from the image
+    """
+    # load image from file path
+    img = load_img(image_path, target_size=(224, 224))
+    
+    # convert to array
+    img = img_to_array(img)
+    
+    # expand to fit dimensions
+    img = np.expand_dims(img, axis=0)
+
+    img = preprocess_input(img)
+
+    # generate feature representation
+    features = model.predict(img, verbose=0) 
+
+    # flatten features
+    features = features.flatten()
+
+    # normalise features
+    features = features / norm(features)
+
+    return features
+
+def image_search_knn(chosen_image, image_paths: list, n:int):
+
+    features = [extract_features(img) for img in image_paths]
+    
+    # fit KNN 
+    neighbours = NearestNeighbors(n_neighbors=n*2, 
+                             algorithm='brute',
+                             metric='cosine').fit(features) # fitted on all the values (features) in the features_dit
+
+    # extract features for the target image
+    target_features = extract_features[chosen_image]
+
+    # find the nearest neighbours for target
+    distances, indices = neighbours.kneighbors([target_features])
+
+    # sort distances
+    distances.sort(key = lambda x: x[1])
+
+    # get the n most similar images and chosen image 
+    dist = [(chosen_image, 0)] + (distances[:n] image_paths[indices][:n]) 
+    
+    # creating a dataframe with the n most similar images including the filename and the distance
+    df = pd.DataFrame(dist, columns = ["image", "distance"])
+
+

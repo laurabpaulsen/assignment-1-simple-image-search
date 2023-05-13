@@ -24,7 +24,7 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parents[1])) # add the parent directory to the path (to be able to import utils no matter where the script is run from )
 
-from utils import plot_similar, image_search_dist
+from utils import plot_similar, image_search_dist, image_search_knn
 
 def parse_args():
     """
@@ -44,6 +44,7 @@ def parse_args():
     parser.add_argument("-d", "--directory", help = "Path to the directory containing the images", default = "data/flowers", type = str)
     parser.add_argument("-n", "--number", help = "Number of most similar images to return", default = 5, type = int)
     parser.add_argument("-o", "--output", help = "Path to the output directory", default = "out", type=str)
+    parser.add_argument("-a", "--search_algorithm", help = "The search algorithm to use. Can be 'knn' or 'hist'", default = "hist", type=str))
     
     return vars(parser.parse_args())
 
@@ -84,7 +85,12 @@ def main():
     chosen_image = Path(f"{args['directory']}/{args['image']}")
 
     # get the n most similar images
-    similar = image_search_dist(chosen_image, images, n = args['number'])
+    if args["search_algorithm"].lower() == "hist":
+        similar = image_search_dist(chosen_image, images, n = args['number'])
+    elif args["search_algorithm"].lower() == "knn":
+        image_search_knn(chosen_image, images, n = args['number'])
+    else:
+        raise ValueError("The search algorithms implemented are 'knn' and 'hist'. Please input one of the two.")
 
     # save the dataframe
     similar.to_csv(Path(f"{args['output']}/{args['number']}_most_similar_{args['image'].split('.')[0]}.csv"), index = False)
