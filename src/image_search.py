@@ -10,9 +10,9 @@ The script takes the following arguments:
     -d: path to the directory containing the images
     -n: number of most similar images to return (defaults to 5)
     -o: path to the output directory
+    -a: the search algorithm to use (defaults to "hist")
 
-Usage: python src/image_search.py -i <image> -d <image directory> -n <number of similar images> -o <output directory>
-    - For this assignment, run the script as follows: python src/image_search.py -i image_0268.jpg  -d data/flowers -n 5 -o out 
+Usage: python src/image_search.py -i <image> -d <image directory> -n <number of similar images> -o <output directory> -a <searc_algorithm>
 
 Author: Laura Bock Paulsen (202005791)
 """
@@ -44,7 +44,7 @@ def parse_args():
     parser.add_argument("-d", "--directory", help = "Path to the directory containing the images", default = "data/flowers", type = str)
     parser.add_argument("-n", "--number", help = "Number of most similar images to return", default = 5, type = int)
     parser.add_argument("-o", "--output", help = "Path to the output directory", default = "out", type=str)
-    parser.add_argument("-a", "--search_algorithm", help = "The search algorithm to use. Can be 'knn' or 'hist'", default = "hist", type=str))
+    parser.add_argument("-a", "--search_algorithm", help = "The search algorithm to use. Can be 'knn' or 'hist'", default = "hist", type=str)
     
     return vars(parser.parse_args())
 
@@ -87,19 +87,25 @@ def main():
     # get the n most similar images
     if args["search_algorithm"].lower() == "hist":
         similar = image_search_dist(chosen_image, images, n = args['number'])
+    
     elif args["search_algorithm"].lower() == "knn":
-        image_search_knn(chosen_image, images, n = args['number'])
+        from tensorflow.keras.applications.vgg16 import VGG16
+        
+        # initialize model without the classification layers
+        model = VGG16(weights='imagenet', include_top=False, pooling='avg',input_shape=(224, 224, 3))        
+        image_search_knn(chosen_image, images, model, n = args['number'])
+    
     else:
         raise ValueError("The search algorithms implemented are 'knn' and 'hist'. Please input one of the two.")
 
     # save the dataframe
-    similar.to_csv(Path(f"{args['output']}/{args['number']}_most_similar_{args['image'].split('.')[0]}.csv"), index = False)
+    similar.to_csv(Path(f"{args['output']}/{args['number']}_most_similar_{args['image'].split('.')[0]}_{args['search_algorithm']}.csv"), index = False)
 
     # plot the n most similar images
     plot = plot_similar(similar, chosen_image)
 
     # save the plot
-    plot.savefig(Path(f"{args['output']}/{args['number']}_most_similar_{args['image'].split('.')[0]}.png"))
+    plot.savefig(Path(f"{args['output']}/{args['number']}_most_similar_{args['image'].split('.')[0]}_{args['search_algorithm']}.png"))
 
 
 
