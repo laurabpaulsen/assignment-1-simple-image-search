@@ -90,10 +90,10 @@ def main():
     
     elif args["search_algorithm"].lower() == "knn":
         from tensorflow.keras.applications.vgg16 import VGG16
-        
+
         # initialize model without the classification layers
         model = VGG16(weights='imagenet', include_top=False, pooling='avg',input_shape=(224, 224, 3))        
-        image_search_knn(chosen_image, images, model, n = args['number'])
+        similar = image_search_knn(chosen_image, images, model, n = args['number'])
     
     else:
         raise ValueError("The search algorithms implemented are 'knn' and 'hist'. Please input one of the two.")
