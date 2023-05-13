@@ -94,12 +94,9 @@ def extract_features(image_path: Path, model):
     # load image from file path
     img = load_img(image_path, target_size=(224, 224))
     
-    # convert to array
+    # prepare image to be input to the model
     img = img_to_array(img)
-    
-    # expand to fit dimensions
     img = np.expand_dims(img, axis=0)
-
     img = preprocess_input(img)
 
     # generate feature representation
@@ -113,28 +110,55 @@ def extract_features(image_path: Path, model):
 
     return features
 
-def image_search_knn(chosen_image, image_paths: list, n:int):
+def image_search_knn(chosen_image, image_paths: list, model, n:int):
+    """
+    Parameters
+    -----------
+    chosen_image : Path 
+        The path to the chosen image
+    
+    image_paths : list 
+        list of paths to the images
 
-    features = [extract_features(img) for img in image_paths]
+    model : Model
+        Pretrained model (e.g., VGG16)
+
+    n : int
+        number of most similar images to return (default = 5)
+
+    Returns
+    -------
+    df : pd.Dataframe
+        dataframe with the n most similar images to the chosen image
+    """
+    # ind of chosen image in list
+    index = image_paths.index(chosen_image)
+
+    # extract features for all images
+    features = [extract_features(img, model) for img in image_paths]
     
     # fit KNN 
-    neighbours = NearestNeighbors(n_neighbors=n*2, 
-                             algorithm='brute',
-                             metric='cosine').fit(features) # fitted on all the values (features) in the features_dit
+    neighbours = NearestNeighbors(
+        n_neighbors=n*2, 
+        algorithm='brute',
+        metric='cosine'
+        ).fit(features)
 
     # extract features for the target image
-    target_features = extract_features[chosen_image]
+    target_features = features[index]
 
     # find the nearest neighbours for target
     distances, indices = neighbours.kneighbors([target_features])
+
+    distances = zip(image_paths, distances)
 
     # sort distances
     distances.sort(key = lambda x: x[1])
 
     # get the n most similar images and chosen image 
-    dist = [(chosen_image, 0)] + (distances[:n] image_paths[indices][:n]) 
+    dist = [(chosen_image, 0)] + (distances[:n]) 
     
     # creating a dataframe with the n most similar images including the filename and the distance
     df = pd.DataFrame(dist, columns = ["image", "distance"])
 
-
+    return df
