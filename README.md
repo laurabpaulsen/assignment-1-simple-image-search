@@ -31,18 +31,20 @@ bash setup.sh
 ```
 source env/bin/activate
 ```
-3. Specify the target image, directory with images and number of similar images to be returned when running the script
+3. Specify the target image, directory with images, search algorithm, and number of similar images to be returned when running the script
 ``` 
-python src/image_search.py -i <chosen_image> -d <directory_with_images> -n <number_of_similar_images>
+python src/image_search.py -i <chosen_image> -d <directory_with_images> -n <number_of_similar_images> -a <search_algorithm>
 ```
 
 ## Repository structure
 ```
 ├── data                                
 │   └── flowers
-├── out                                 
-│   ├── 5_most_similar_image_0268.csv 
-│   └── 5_most_similar_image_0268.png 
+├── out           
+│   ├── 5_most_similar_image_0268_hist.csv 
+│   └── 5_most_similar_image_0268_hist.png                       
+│   ├── 5_most_similar_image_0268_knn.csv 
+│   └── 5_most_similar_image_0268_knn.png 
 ├── src
 │   └── image_search.py                 
 ├── utils                               
@@ -54,7 +56,6 @@ python src/image_search.py -i <chosen_image> -d <directory_with_images> -n <numb
 ├── setup.sh                       
 └── README.md                           
 ```
-
 
 ## Results
 Running the script results in a csv file. The first row contains the filename of the target image and the distance to itself (0). The following rows contain the filename and distance to the *n* most similar images to the target image.
@@ -68,6 +69,12 @@ Running the script results in a csv file. The first row contains the filename of
 
 Additionally a plot is saved with the target image and the *n* most similar images. This can be used to inspect the results visually.
 
-The following image shows the target image and the 5 most similar images to it.
-![result](out/5_most_similar_image_0268.png)
+Both a simple image search and a KNN algorithm was used to identify the 5 most similar images to `image_0268.png`.
 
+### Simple image search
+![result](out/5_most_similar_image_0268_hist.png)
+
+### KNN
+![result](out/5_most_similar_image_0268_knn.png)
+
+For the image chosen for this assignment it is evident that the KNN algorithm outperforms the simple image search relying on colour histograms. However, it might be the case that this only holds for the particular image chosen. To conclude on which algorithm is better for the given task more testing is required. 
