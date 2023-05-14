@@ -77,4 +77,4 @@ Both a simple image search and a KNN algorithm was used to identify the 5 most s
 ### KNN
 ![result](out/5_most_similar_image_0268_knn.png)
 
-For the image chosen for this assignment it is evident that the KNN algorithm outperforms the simple image search relying on colour histograms. However, it might be the case that this only holds for the particular image chosen. To conclude on which algorithm is better for the given task more testing is required. 
+For the image chosen for this assignment it is evident that the KNN algorithm using VGG16 for feature extraction outperforms the simple image search relying on colour histograms. However, it might be the case that this only holds for the particular image chosen. To conclude on which algorithm is better for the given task more testing is required. 
