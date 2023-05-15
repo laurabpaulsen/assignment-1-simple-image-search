@@ -21,6 +21,8 @@ bash setup.sh
 bash run.sh
 ````
 
+The pipeline was developed and tested on [uCloud](https://cloud.sdu.dk/app/dashboard) (Ubuntu v22.10m, Coder python v1.77.3, python v3.10.7).
+
 ### Arguments
 It is possible to specify another directory of images as well as modifying the number of similar images to be returned. To run the script with different inputs, follow the steps below.
 1. create the virtual environment (if not already done)
